@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Discord Custom</title>
+<style>
+:root{--bg:#050505;--fg:#f5f5f5;--mut:rgba(245,245,245,.55);--glass:rgba(255,255,255,.07);--glass2:rgba(255,255,255,.13);--line:rgba(255,255,255,.18);--hi:rgba(255,255,255,.35);--blob:rgba(255,255,255,.16);--sh:rgba(0,0,0,.5);box-sizing:border-box}
+:root[data-theme=light]{--bg:#f2f2f2;--fg:#0a0a0a;--mut:rgba(10,10,10,.55);--glass:rgba(255,255,255,.55);--glass2:rgba(255,255,255,.85);--line:rgba(0,0,0,.12);--hi:rgba(255,255,255,.95);--blob:rgba(0,0,0,.13);--sh:rgba(0,0,0,.12)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,-apple-system,"Noto Sans",sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;padding:max(18px,env(safe-area-inset-top)) 16px max(40px,env(safe-area-inset-bottom));transition:background .5s,color .5s;overflow-x:hidden}
+.blob{position:fixed;border-radius:50%;background:radial-gradient(circle,var(--blob),transparent 68%);will-change:transform;z-index:0;pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
+.b1{width:460px;height:460px;top:-90px;left:-80px}
+.b2{width:380px;height:380px;bottom:8%;right:-70px;animation-delay:-6s}
+.b3{width:300px;height:300px;top:45%;left:30%;animation-delay:-12s}
+@keyframes drift{to{transform:translate(60px,-50px) scale(1.25)}}
+.wrap{position:relative;z-index:1;max-width:820px;margin:0 auto}
+.glass{background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);box-shadow:inset 0 1px 0 var(--hi),inset 0 -1px 0 rgba(255,255,255,.04),0 10px 34px var(--sh);border-radius:22px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:14px;animation:rise .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(22px,6vw,32px);font-weight:800;letter-spacing:-.03em;background:linear-gradient(100deg,var(--fg) 30%,var(--mut) 50%,var(--fg) 70%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite}
+@keyframes shine{to{background-position:-250% 0}}
+.sub{color:var(--mut);font-size:13px;margin-top:4px;line-height:1.45}
+.ctl{display:flex;gap:8px;flex-shrink:0}
+select,.btn{font:inherit;font-size:13px;color:var(--fg);background:var(--glass2);border:1px solid var(--line);border-radius:14px;padding:9px 12px;cursor:pointer;backdrop-filter:blur(14px);transition:transform .25s,background .25s}
+select:focus-visible,.btn:focus-visible,.row:focus-visible,.pill:focus-visible,input:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+select option{background:#111;color:#fff}
+.btn:active,.pill:active,.row:active{transform:scale(.96)}
+.bar{position:sticky;top:8px;z-index:5;padding:12px;margin-bottom:14px;animation:rise .9s .12s cubic-bezier(.2,.8,.2,1) both}
+input{width:100%;font:inherit;font-size:14px;color:var(--fg);background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:11px 14px;transition:box-shadow .3s}
+input::placeholder{color:var(--mut)}
+input:focus{box-shadow:0 0 0 4px var(--glass2)}
+.styles{display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;align-items:center}
+.styles::-webkit-scrollbar{display:none}
+.lbl{font-size:12px;color:var(--mut);flex-shrink:0}
+.pill{flex-shrink:0;font:inherit;font-size:13px;color:var(--fg);background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;transition:background .3s,transform .25s,color .3s}
+.pill.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tip{font-size:12.5px;color:var(--mut);padding:0 6px 14px;line-height:1.5}
+.cat.glass{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--glass2)}
+.cat{margin-bottom:14px;padding:14px;animation:rise .8s cubic-bezier(.2,.8,.2,1) both}
+.chead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.ctitle{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ccode{font-size:11px;color:var(--mut);margin-top:2px}
+.rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.row{position:relative;overflow:hidden;text-align:left;font:inherit;font-size:14px;color:var(--fg);background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:11px 13px;cursor:pointer;transition:transform .3s cubic-bezier(.2,.8,.2,1),background .3s,box-shadow .3s;word-break:break-word}
+.row::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,var(--hi) 50%,transparent 65%);transform:translateX(-120%);transition:transform .7s}
+.row:hover{transform:translateY(-2px);background:var(--glass2);box-shadow:0 8px 20px var(--sh)}
+.row:hover::after{transform:translateX(120%)}
+.row.ok{animation:pop .5s}
+@keyframes pop{40%{transform:scale(1.04);background:var(--fg);color:var(--bg)}}
+.empty{text-align:center;color:var(--mut);padding:40px 0}
+#toast{position:fixed;left:50%;bottom:max(26px,env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;z-index:9;padding:11px 20px;border-radius:999px;font-size:13px;transition:.4s cubic-bezier(.2,.8,.2,1);pointer-events:none;max-width:90vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#modal{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .4s}
+#modal.open{opacity:1;pointer-events:auto}
+.mcard{width:100%;max-width:420px;padding:22px;transform:translateY(30px) scale(.94);transition:transform .5s cubic-bezier(.2,.8,.2,1);background:var(--glass2)}
+#modal.open .mcard{transform:none}
+.mcard h2{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
+.mcard{max-width:720px;height:min(86vh,760px);display:flex;flex-direction:column;padding:18px}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.mcard h2{margin-bottom:0}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:10px 0;padding-bottom:2px;scrollbar-width:none;flex-shrink:0}
+.chips::-webkit-scrollbar{display:none}
+#tl{overflow-y:auto;flex:1;padding-right:2px}
+.gh{font-size:13px;color:var(--mut);margin:14px 2px 8px;font-weight:600}
+.tu{background:var(--glass);border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden;transition:background .3s}
+.tu[open]{background:var(--glass2)}
+.tu summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:center;padding:11px 13px;font-size:14px;font-weight:600}
+.tu summary::-webkit-details-marker{display:none}
+.tu .n{flex-shrink:0;min-width:28px;height:24px;padding:0 6px;border-radius:999px;background:var(--fg);color:var(--bg);font-size:12px;display:grid;place-items:center}
+.tu p{padding:0 14px 13px;font-size:13.5px;line-height:1.6;color:var(--mut);animation:stepin .4s both}
+@keyframes stepin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media(max-width:520px){header{flex-direction:column;align-items:stretch}.ctl select{flex:1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="wrap">
+  <header class="glass">
+    <div><h1>Discord Custom</h1><p class="sub" id="sub"></p></div>
+    <div class="ctl">
+      <select id="lang" aria-label="Language"></select>
+      <button class="btn" id="tut" aria-label="Tutorial">📖</button>
+      <button class="btn" id="theme" aria-label="Theme">◐</button>
+    </div>
+  </header>
+  <div class="bar glass">
+    <input id="q" type="search" autocomplete="off">
+    <div class="styles"><span class="lbl" id="slbl"></span><span id="pills" style="display:contents"></span></div>
+  </div>
+  <p class="tip" id="tip"></p>
+  <main id="list"></main>
+</div>
+<div id="modal" aria-hidden="true"><div class="mcard glass" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="mhead"><h2 id="mt"></h2><button class="btn" id="mx" aria-label="Close">✕</button></div>
+  <input id="sq" type="search" autocomplete="off">
+  <div class="chips" id="chips"></div>
+  <p class="tip" id="snote" style="padding:0 0 8px"></p>
+  <div id="tl"></div>
+</div></div>
+<div id="toast" class="glass"></div>
+
+<script>
+const EN=["INFORMATION","COMMUNITY","CHAT","MEDIA","GAMING","VOICE","SUPPORT","STAFF"];
+const D=[
+[["👋","welcome"],["📜","rules"],["📢","announcements"],["🎉","events"],["🗳️","polls"],["✅","verify"],["🎭","roles"],["📖","server-info"],["🤝","partners"],["🚀","boosts"]],
+[["💬","general"],["👥","introductions"],["🖼️","showcase"],["💡","suggestions"],["🏆","leaderboard"],["🎁","giveaways"],["🎂","birthdays"],["🗨️","off-topic"]],
+[["🤖","bot-commands"],["🔢","counting"],["🐸","memes"],["💭","confessions"],["🐶","pets"],["🍔","food"],["🎲","games-chat"],["📚","study-room"]],
+[["🎨","art"],["🎵","music"],["🎬","clips"],["📷","photos"],["📺","streams"],["🎙️","podcasts"]],
+[["🕹️","looking-for-group"],["🏅","tournaments"],["🧱","roblox"],["⛏️","minecraft"],["🔫","fps-lounge"],["📈","trading"]],
+[["🔊","General Voice"],["🎧","Music Room"],["🎮","Gaming Lounge"],["🎤","Stage"],["👑","VIP Lounge"],["🔇","AFK"]],
+[["🎫","tickets"],["❓","help"],["🐛","bug-reports"],["📝","feedback"],["🛡️","report-user"]],
+[["🛠️","staff-chat"],["📋","mod-log"],["🔒","admin-only"],["📊","stats"],["🚨","alerts"]]
+];
+const S=[(e,n)=>`「${e}┃${n}」`,(e,n)=>`${e}┃${n}`,(e,n)=>`【${e}】${n}`,(e,n)=>`${e}・${n}`,(e,n)=>`「${e}｜${n}」`,(e,n)=>`╏${e}╏${n}`];
+const H=n=>`━━ ${n} ━━`;
+const T={
+id:{n:"Indonesia",sub:"Nama channel Discord siap pakai, semuanya berbahasa Inggris biar server rapi.",q:"Cari channel...",st:"Gaya",all:"Salin semua",ok:"Tersalin!",tip:"Channel teks otomatis huruf kecil pakai tanda hubung. Ketuk nama untuk menyalin.",no:"Tidak ditemukan",c:["Informasi","Komunitas","Obrolan","Media","Gaming","Suara","Bantuan","Staf"]},
+en:{n:"English",sub:"Ready-made Discord channel names, all in English so your server stays clean.",q:"Search channel...",st:"Style",all:"Copy all",ok:"Copied!",tip:"Text channels turn lowercase with hyphens automatically. Tap a name to copy.",no:"Nothing found",c:["Information","Community","Chat","Media","Gaming","Voice","Support","Staff"]},
+es:{n:"Español",sub:"Nombres de canales de Discord listos para usar, todos en inglés para un servidor ordenado.",q:"Buscar canal...",st:"Estilo",all:"Copiar todo",ok:"¡Copiado!",tip:"Los canales de texto pasan a minúsculas con guiones. Toca un nombre para copiar.",no:"Sin resultados",c:["Información","Comunidad","Chat","Multimedia","Juegos","Voz","Soporte","Staff"]},
+pt:{n:"Português",sub:"Nomes de canais do Discord prontos, todos em inglês para deixar o servidor organizado.",q:"Buscar canal...",st:"Estilo",all:"Copiar tudo",ok:"Copiado!",tip:"Canais de texto viram minúsculas com hífens. Toque em um nome para copiar.",no:"Nada encontrado",c:["Informações","Comunidade","Bate-papo","Mídia","Jogos","Voz","Suporte","Equipe"]},
+fr:{n:"Français",sub:"Noms de salons Discord prêts à l'emploi, tous en anglais pour un serveur propre.",q:"Rechercher un salon...",st:"Style",all:"Tout copier",ok:"Copié !",tip:"Les salons textuels passent en minuscules avec des tirets. Touchez un nom pour copier.",no:"Aucun résultat",c:["Informations","Communauté","Discussion","Médias","Jeux","Vocal","Support","Équipe"]},
+de:{n:"Deutsch",sub:"Fertige Discord-Kanalnamen, alle auf Englisch für einen aufgeräumten Server.",q:"Kanal suchen...",st:"Stil",all:"Alle kopieren",ok:"Kopiert!",tip:"Textkanäle werden automatisch klein mit Bindestrichen. Namen antippen zum Kopieren.",no:"Nichts gefunden",c:["Infos","Community","Chat","Medien","Gaming","Sprache","Support","Team"]},
+ru:{n:"Русский",sub:"Готовые названия каналов Discord, все на английском для аккуратного сервера.",q:"Поиск канала...",st:"Стиль",all:"Копировать всё",ok:"Скопировано!",tip:"Текстовые каналы автоматически в нижнем регистре с дефисами. Нажмите на название, чтобы скопировать.",no:"Ничего не найдено",c:["Информация","Сообщество","Чат","Медиа","Игры","Голос","Поддержка","Персонал"]},
+ja:{n:"日本語",sub:"そのまま使えるDiscordチャンネル名。すべて英語でサーバーをすっきり。",q:"チャンネル検索...",st:"スタイル",all:"すべてコピー",ok:"コピーしました！",tip:"テキストチャンネルは自動で小文字とハイフンになります。名前をタップでコピー。",no:"見つかりません",c:["情報","コミュニティ","チャット","メディア","ゲーム","ボイス","サポート","スタッフ"]},
+ko:{n:"한국어",sub:"바로 쓰는 디스코드 채널 이름, 모두 영어로 서버를 깔끔하게.",q:"채널 검색...",st:"스타일",all:"전체 복사",ok:"복사됨!",tip:"텍스트 채널은 자동으로 소문자와 하이픈으로 바뀝니다. 이름을 눌러 복사하세요.",no:"결과 없음",c:["정보","커뮤니티","채팅","미디어","게임","음성","지원","스태프"]},
+zh:{n:"中文",sub:"现成的 Discord 频道名称，全部使用英文，让服务器更整洁。",q:"搜索频道...",st:"样式",all:"全部复制",ok:"已复制！",tip:"文字频道会自动转为小写并加连字符。点击名称即可复制。",no:"未找到",c:["信息","社区","聊天","媒体","游戏","语音","支持","管理组"]}
+};
+const TL={
+en:["Discord tutorials","Search tutorials...","All",""],
+id:["Tutorial Discord","Cari tutorial...","Semua",""],
+es:["Tutoriales de Discord","Buscar tutorial...","Todos","Los tutoriales están disponibles en inglés e indonesio."],
+pt:["Tutoriais do Discord","Buscar tutorial...","Todos","Os tutoriais estão disponíveis em inglês e indonésio."],
+fr:["Tutoriels Discord","Rechercher un tutoriel...","Tous","Les tutoriels sont disponibles en anglais et en indonésien."],
+de:["Discord-Tutorials","Tutorial suchen...","Alle","Tutorials gibt es auf Englisch und Indonesisch."],
+ru:["Уроки Discord","Поиск урока...","Все","Уроки доступны на английском и индонезийском."],
+ja:["Discordチュートリアル","チュートリアル検索...","すべて","チュートリアルは英語とインドネシア語で利用できます。"],
+ko:["디스코드 튜토리얼","튜토리얼 검색...","전체","튜토리얼은 영어와 인도네시아어로 제공됩니다."],
+zh:["Discord 教程","搜索教程...","全部","教程提供英语和印尼语版本。"]
+};
+const GE=[
+["Server Setup",[
+["Create your server","Tap + on the left bar, choose Create My Own, pick a purpose, name it, then press Create."],
+["Upload a server icon","Server Settings → Overview → Upload Icon. A square image works best, 512x512 is ideal."],
+["Set the system channel","Server Settings → Overview → System Messages Channel, so welcome messages land in #welcome."],
+["Set the verification level","Server Settings → Safety Setup → pick Medium or higher to block throwaway accounts."],
+["Enable Community mode","Server Settings → Enable Community, then follow the steps for the rules and updates channels."]]],
+["Invite Links (No Expiry)",[
+["Create an invite link","Right-click the server name → Invite People → copy the link."],
+["Make an invite never expire","Invite People → gear icon → Expire After: Never."],
+["Remove the use limit","In the same invite settings, set Max Number of Uses to No limit."],
+["Turn off temporary membership","Leave “Grant temporary membership” off so members are not kicked when they go offline."],
+["Why links expire","New invites expire after 7 days by default, so change the setting before sharing."],
+["Fix “Invite Invalid”","The link expired, hit its limit, or was revoked. Generate a fresh one with Never and No limit."],
+["Check all active invites","Server Settings → Invites shows who made each link, its uses and its expiry."],
+["Set a vanity URL","Boost the server to Level 3, then Server Settings → Vanity URL → pick discord.gg/yourname."]]],
+["Channels & Categories",[
+["Create a category","Right-click an empty area → Create Category. Name it like ━━ INFORMATION ━━."],
+["Create a text channel","Tap + beside a category → Text → paste a name from Discord Custom → Create."],
+["Create a voice channel","Tap + beside a category → Voice → name it, for example 🔊 General Voice."],
+["Make a private channel","Create Channel → turn on Private Channel → pick the roles allowed in."],
+["Set a rules channel","Community settings → Rules Channel. Pick #rules so new members see it first."]]],
+["Roles & Permissions",[
+["Create a role","Server Settings → Roles → Create Role → name it and pick a color."],
+["Order your roles","Drag roles in the list. Higher roles can manage lower ones."],
+["Give a role","Server Settings → Members → + next to a member, or right-click the member → Roles."],
+["Make an admin role","Roles → Permissions → enable Administrator. Give it only to people you trust."],
+["Make a moderator role","Enable Kick, Ban, Timeout and Manage Messages, but not Administrator."]]],
+["Moderation & Safety",[
+["Enable AutoMod","Server Settings → AutoMod → turn on Block Spam and Block Custom Words."],
+["Timeout a member","Right-click the member → Timeout → choose a duration."],
+["Ban a member","Right-click the member → Ban Member. Pick how much message history to delete."],
+["Use the audit log","Server Settings → Audit Log shows who changed roles, channels and invites."],
+["Require 2FA for mods","Safety Setup → Require 2FA for moderator actions to protect the server."]]],
+["Bots",[
+["Add a bot","Open the bot's official invite link → choose your server → Authorize."],
+["Give the right permissions","Grant only what the bot needs. Avoid Administrator unless required."],
+["Add a moderation bot","Popular options like Carl-bot or Dyno add logs, filters and warnings."],
+["Set up reaction roles","Use Carl-bot or a similar bot so members pick roles by reacting."]]],
+["Growth & Community",[
+["Pin your invite","Pin the never-expiring invite in #welcome so it is easy to find."],
+["Track invites","Use an invite-tracker bot to see who brought new members."],
+["Use onboarding","Server Settings → Onboarding → add questions so members pick their interests."],
+["Post a rules message","Write short, numbered rules in #rules and pin them."],
+["Run events","Server dropdown → Create Event to schedule game nights or announcements."]]],
+["Customization & Boost",[
+["Upload custom emojis","Server Settings → Emoji → Upload Emoji. Max 256 KB, square images work best."],
+["Boost your server","Server dropdown → Server Boost to unlock perks like more emoji slots."],
+["Use styled channel names","Copy a name from Discord Custom like 「👋┃welcome」 and paste it when renaming."],
+["Keep one style","Use a single separator style (┃ or ・) for every channel."],
+["Use category dividers","Name categories like ━━ INFORMATION ━━ so each section stands out."]]],
+["Voice & Events",[
+["Create a stage channel","Choose Stage as channel type for talks and AMAs with speakers and listeners."],
+["Set a user limit","Edit the voice channel → User Limit for small rooms like duo or squad."],
+["Create an AFK channel","Overview → Inactive Channel and timeout, so idle users move automatically."]]],
+["Mobile & Tips",[
+["Copy an invite on mobile","Tap the server name → Invite → Edit invite link → Copy."],
+["Enable Developer Mode","User Settings → Advanced → Developer Mode to copy IDs."],
+["Transfer ownership","Server Settings → Members → ⋮ next to the user → Transfer Ownership."],
+["Use Discord Custom","Copy styled names from this tool to keep your server neat and readable."],
+["Avoid invalid links","Before sharing any link, check that Expire After is Never and Max Uses is No limit."]]]
+];
+const GI=[
+["Pengaturan Server",[
+["Bikin server","Tekan + di bar kiri, pilih Create My Own, pilih tujuan, beri nama, lalu Create."],
+["Upload ikon server","Server Settings → Overview → Upload Icon. Gambar persegi paling bagus, 512x512 ideal."],
+["Atur system channel","Server Settings → Overview → System Messages Channel agar pesan sambutan masuk ke #welcome."],
+["Atur verification level","Server Settings → Safety Setup → pilih Medium atau lebih tinggi untuk blokir akun sekali pakai."],
+["Aktifkan mode Community","Server Settings → Enable Community, lalu ikuti langkah channel aturan dan update."]]],
+["Link Invite (Anti Expired)",[
+["Bikin link invite","Klik kanan nama server → Invite People → salin link."],
+["Bikin invite tanpa expired","Invite People → ikon gerigi → Expire After: Never."],
+["Hapus batas pemakaian","Di pengaturan invite yang sama, set Max Number of Uses ke No limit."],
+["Matikan keanggotaan sementara","Biarkan “Grant temporary membership” mati agar member tidak ditendang saat offline."],
+["Kenapa link expired","Invite baru kedaluwarsa dalam 7 hari secara default, jadi ubah dulu sebelum dibagikan."],
+["Atasi “Invite Invalid”","Link sudah expired, mencapai batas, atau dicabut. Buat baru dengan Never dan No limit."],
+["Cek semua invite aktif","Server Settings → Invites menampilkan pembuat, jumlah pakai, dan masa berlaku."],
+["Pasang vanity URL","Boost server ke Level 3, lalu Server Settings → Vanity URL → pilih discord.gg/namamu."]]],
+["Channel & Kategori",[
+["Bikin kategori","Klik kanan area kosong → Create Category. Beri nama seperti ━━ INFORMATION ━━."],
+["Bikin channel teks","Tekan + di samping kategori → Text → tempel nama dari Discord Custom → Create."],
+["Bikin channel suara","Tekan + di samping kategori → Voice → beri nama, misalnya 🔊 General Voice."],
+["Bikin channel privat","Create Channel → aktifkan Private Channel → pilih role yang boleh masuk."],
+["Atur channel aturan","Pengaturan Community → Rules Channel. Pilih #rules agar member baru melihatnya duluan."]]],
+["Role & Izin",[
+["Bikin role","Server Settings → Roles → Create Role → beri nama dan pilih warna."],
+["Atur urutan role","Seret role di daftar. Role yang lebih tinggi bisa mengatur role di bawahnya."],
+["Beri role ke member","Server Settings → Members → + di samping member, atau klik kanan member → Roles."],
+["Bikin role admin","Roles → Permissions → aktifkan Administrator. Beri hanya ke orang yang dipercaya."],
+["Bikin role moderator","Aktifkan Kick, Ban, Timeout, dan Manage Messages, tapi bukan Administrator."]]],
+["Moderasi & Keamanan",[
+["Aktifkan AutoMod","Server Settings → AutoMod → nyalakan Block Spam dan Block Custom Words."],
+["Timeout member","Klik kanan member → Timeout → pilih durasi."],
+["Ban member","Klik kanan member → Ban Member. Pilih seberapa banyak riwayat pesan yang dihapus."],
+["Pakai audit log","Server Settings → Audit Log menampilkan siapa mengubah role, channel, dan invite."],
+["Wajibkan 2FA untuk mod","Safety Setup → Require 2FA for moderator actions untuk melindungi server."]]],
+["Bot",[
+["Tambah bot","Buka link invite resmi bot → pilih servermu → Authorize."],
+["Beri izin bot yang pas","Beri hanya yang dibutuhkan. Hindari Administrator kecuali perlu."],
+["Tambah bot moderasi","Pilihan populer seperti Carl-bot atau Dyno menyediakan log, filter, dan peringatan."],
+["Atur reaction role","Pakai Carl-bot atau bot serupa agar member memilih role lewat reaksi."]]],
+["Pertumbuhan & Komunitas",[
+["Pin invite-mu","Pin invite yang tak expired di #welcome agar mudah ditemukan."],
+["Lacak invite","Pakai bot invite tracker untuk melihat siapa yang membawa member baru."],
+["Pakai onboarding","Server Settings → Onboarding → tambah pertanyaan agar member memilih minatnya."],
+["Tulis pesan aturan","Tulis aturan singkat bernomor di #rules lalu pin."],
+["Adakan event","Dropdown server → Create Event untuk jadwal game night atau pengumuman."]]],
+["Kustomisasi & Boost",[
+["Upload emoji kustom","Server Settings → Emoji → Upload Emoji. Maks 256 KB, gambar persegi paling bagus."],
+["Boost servermu","Dropdown server → Server Boost untuk membuka perk seperti slot emoji lebih banyak."],
+["Pakai nama channel bergaya","Salin nama dari Discord Custom seperti 「👋┃welcome」 lalu tempel saat mengganti nama."],
+["Jaga satu gaya","Pakai satu gaya pemisah (┃ atau ・) untuk semua channel."],
+["Pakai pembatas kategori","Beri nama kategori seperti ━━ INFORMATION ━━ agar tiap bagian menonjol."]]],
+["Suara & Event",[
+["Bikin stage channel","Pilih tipe Stage untuk talk dan AMA dengan pembicara dan pendengar."],
+["Atur batas user","Edit channel suara → User Limit untuk ruang kecil seperti duo atau squad."],
+["Bikin channel AFK","Overview → Inactive Channel dan timeout agar user diam pindah otomatis."]]],
+["HP & Tips",[
+["Salin invite di HP","Tekan nama server → Invite → Edit invite link → Copy."],
+["Aktifkan Developer Mode","User Settings → Advanced → Developer Mode untuk menyalin ID."],
+["Pindahkan kepemilikan","Server Settings → Members → ⋮ di samping user → Transfer Ownership."],
+["Pakai Discord Custom","Salin nama bergaya dari alat ini agar servermu rapi dan enak dibaca."],
+["Hindari link invalid","Sebelum membagikan link apa pun, pastikan Expire After: Never dan Max Uses: No limit."]]]
+];
+const $=id=>document.getElementById(id);
+const st={l:"en",s:0,t:"dark",g:-1};
+const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const set=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+if(T[get("dc_l")])st.l=get("dc_l");
+if(get("dc_s")!==null&&S[+get("dc_s")])st.s=+get("dc_s");
+st.t=get("dc_t")||"dark";
+
+let tt;
+function toast(m){const e=$("toast");e.textContent=m;e.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("show"),1600)}
+async function copy(text,el){
+  try{await navigator.clipboard.writeText(text)}catch(e){
+    const a=document.createElement("textarea");a.value=text;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();
+    try{document.execCommand("copy")}catch(_){}a.remove();
+  }
+  if(el){el.classList.remove("ok");void el.offsetWidth;el.classList.add("ok")}
+  toast(T[st.l].ok+"  "+(text.length>40?text.slice(0,40)+"…":text.replace(/\n/g," · ")));
+}
+
+function pills(){
+  $("pills").innerHTML=S.map((f,i)=>`<button class="pill${i===st.s?" on":""}" data-i="${i}">${f("👋","welcome")}</button>`).join("");
+  $("pills").querySelectorAll(".pill").forEach(b=>b.onclick=()=>{st.s=+b.dataset.i;set("dc_s",st.s);pills();render(false)});
+}
+
+function render(anim=true){
+  const L=T[st.l],q=$("q").value.trim().toLowerCase(),f=S[st.s];
+  let out="",n=0;
+  D.forEach((cat,ci)=>{
+    const items=cat.filter(([e,name])=>!q||name.toLowerCase().includes(q));
+    if(!items.length)return;
+    n+=items.length;
+    const lines=items.map(([e,name])=>f(e,name));
+    out+=`<section class="cat glass" style="${anim?`animation-delay:${.15+ci*.07}s`:"animation:none"}">
+      <div class="chead"><div><div class="ctitle">${L.c[ci]}</div><div class="ccode" data-h="${H(EN[ci])}" style="cursor:pointer">${H(EN[ci])}</div></div>
+      <button class="btn" data-all="${ci}">${L.all}</button></div>
+      <div class="rows">${lines.map((t,i)=>`<button class="row" data-t="${t}">${t}</button>`).join("")}</div></section>`;
+  });
+  $("list").innerHTML=out||`<p class="empty">${L.no}</p>`;
+  $("list").querySelectorAll(".row").forEach(b=>b.onclick=()=>copy(b.dataset.t,b));
+  $("list").querySelectorAll(".ccode").forEach(b=>b.onclick=()=>copy(b.dataset.h,null));
+  $("list").querySelectorAll("[data-all]").forEach(b=>b.onclick=()=>{
+    const ci=+b.dataset.all;
+    const t=D[ci].filter(([e,name])=>!q||name.toLowerCase().includes(q)).map(([e,name])=>f(e,name)).join("\n");
+    copy(t,null);
+  });
+}
+
+function ui(){
+  const L=T[st.l];
+  document.documentElement.lang=st.l;
+  $("sub").textContent=L.sub;$("q").placeholder=L.q;$("slbl").textContent=L.st;$("tip").textContent=L.tip;
+  document.documentElement.dataset.theme=st.t;
+  const B=TL[st.l];
+  $("mt").textContent=B[0];$("sq").placeholder=B[1];$("tut").title=B[0];
+  $("snote").textContent=(st.l==="en"||st.l==="id")?"":B[3];
+  if($("modal").classList.contains("open"))tuts();
+}
+function tuts(){
+  const B=TL[st.l],src=st.l==="id"?GI:GE,q=$("sq").value.trim().toLowerCase();
+  $("chips").innerHTML=[B[2],...src.map(g=>g[0])].map((n,i)=>`<button class="pill${i-1===st.g?" on":""}" data-g="${i-1}">${n}</button>`).join("");
+  $("chips").querySelectorAll(".pill").forEach(b=>b.onclick=()=>{st.g=+b.dataset.g;tuts()});
+  let k=0,out="";
+  src.forEach((g,gi)=>{
+    const base=k;k+=g[1].length;
+    if(st.g>=0&&st.g!==gi)return;
+    const it=g[1].map((x,i)=>[base+i+1,x]).filter(([n,x])=>!q||(x[0]+" "+x[1]).toLowerCase().includes(q));
+    if(!it.length)return;
+    out+=`<h3 class="gh">${g[0]}</h3>`+it.map(([n,x])=>`<details class="tu"><summary><span class="n">${n}</span>${x[0]}</summary><p>${x[1]}</p></details>`).join("");
+  });
+  $("tl").innerHTML=out||`<p class="empty">${T[st.l].no}</p>`;
+}
+function modal(o){
+  const m=$("modal");m.classList.toggle("open",o);m.setAttribute("aria-hidden",!o);
+  if(o){tuts();$("sq").focus({preventScroll:true})}
+}
+
+$("lang").innerHTML=Object.keys(T).map(k=>`<option value="${k}">${T[k].n}</option>`).join("");
+$("lang").value=st.l;
+$("lang").onchange=e=>{st.l=e.target.value;set("dc_l",st.l);ui();render(false)};
+$("theme").onclick=()=>{st.t=st.t==="dark"?"light":"dark";set("dc_t",st.t);ui()};
+$("q").oninput=()=>render(false);
+$("tut").onclick=()=>modal(true);
+$("mx").onclick=()=>modal(false);
+$("sq").oninput=tuts;
+$("modal").onclick=e=>{if(e.target.id==="modal")modal(false)};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")modal(false)});
+ui();pills();render();
+</script>
+</body>
+</html>
